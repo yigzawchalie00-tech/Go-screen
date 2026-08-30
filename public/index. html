@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Government Employee Screening System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- PUBLIC: JOB LISTINGS -->
+<div id="public-screen">
+  <header class="pub-header">
+    <div class="pub-header-inner">
+      <div>
+        <div class="pub-title-am">የሥራ ማስታወቂያ ሥርዓት</div>
+        <div class="pub-title-en">Government Employment Screening System</div>
+      </div>
+      <button class="btn-outline" id="hr-login-btn">HR Login</button>
+    </div>
+  </header>
+
+  <div class="pub-content">
+    <div class="pub-hero">
+      <h2 class="pub-hero-title" id="lang-toggle-pub">
+        <span class="am">ክፍት የሥራ ቦታዎች</span>
+        <span class="en" style="display:none;">Open Job Positions</span>
+      </h2>
+      <p class="pub-hero-sub">
+        <span class="am">ለሚፈልጉት ሥራ ያመልክቱ — ሁሉም መረጃዎ ስሉጥ ይሆናሉ</span>
+        <span class="en" style="display:none;">Apply for a position — your information will be reviewed carefully</span>
+      </p>
+      <button class="lang-btn" onclick="toggleLang()">English / አማርኛ</button>
+    </div>
+    <div id="jobs-list" class="jobs-grid"></div>
+  </div>
+</div>
+
+<!-- PUBLIC: APPLICATION FORM -->
+<div id="apply-screen" style="display:none;">
+  <header class="pub-header">
+    <div class="pub-header-inner">
+      <button class="btn-ghost" onclick="showPublic()">← <span class="am">ወደ ዝርዝር</span><span class="en" style="display:none;">Back</span></button>
+      <div class="pub-title-en" id="apply-job-title"></div>
+    </div>
+  </header>
+  <div class="pub-content">
+    <div class="apply-card">
+      <div class="apply-job-info" id="apply-job-info"></div>
+      <form id="apply-form" enctype="multipart/form-data">
+        <input type="hidden" id="apply-job-id">
+
+        <div class="form-section">
+          <div class="section-label"><span class="am">የግል መረጃ</span><span class="en" style="display:none;">Personal Info</span></div>
+          <div class="form-grid">
+            <div class="form-group span-2">
+              <label><span class="am">ሙሉ ስም (በአማርኛ)</span><span class="en" style="display:none;">Full Name (Amharic)</span></label>
+              <input type="text" name="full_name_am" id="f-full_name_am">
+            </div>
+            <div class="form-group span-2">
+              <label><span class="am">Full Name (English)</span><span class="en" style="display:none;">Full Name (English) *</span> *</label>
+              <input type="text" name="full_name" id="f-full_name" required>
+            </div>
+            <div class="form-group">
+              <label><span class="am">ጾታ</span><span class="en" style="display:none;">Gender</span></label>
+              <select name="gender" id="f-gender">
+                <option value="">—</option>
+                <option value="Male">Male / ወንድ</option>
+                <option value="Female">Female / ሴት</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><span class="am">የትዉልድ ቀን</span><span class="en" style="display:none;">Date of Birth</span></label>
+              <input type="date" name="date_of_birth" id="f-date_of_birth">
+            </div>
+            <div class="form-group">
+              <label><span class="am">ክልል</span><span class="en" style="display:none;">Region</span></label>
+              <input type="text" name="region" id="f-region">
+            </div>
+            <div class="form-group">
+              <label><span class="am">ወረዳ</span><span class="en" style="display:none;">Woreda</span></label>
+              <input type="text" name="woreda" id="f-woreda">
+            </div>
+            <div class="form-group span-2">
+              <label><span class="am">ስልክ</span><span class="en" style="display:none;">Phone</span> *</label>
+              <input type="tel" name="phone" id="f-phone" required>
+            </div>
+            <div class="form-group span-2">
+              <label>Email</label>
+              <input type="email" name="email" id="f-email">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-label"><span class="am">ትምህርት</span><span class="en" style="display:none;">Education</span></div>
+          <div class="form-grid">
+            <div class="form-group span-2">
+              <label><span class="am">የትምህርት ደረጃ</span><span class="en" style="display:none;">Education Level</span> *</label>
+              <select name="education_level" id="f-education_level" required>
+                <option value="">—</option>
+                <option value="certificate">Certificate / ሰርቲፊኬት</option>
+                <option value="diploma">Diploma / ዲፕሎማ</option>
+                <option value="degree">Bachelor's Degree / ዲግሪ</option>
+                <option value="masters">Master's Degree / ማስተርስ</option>
+                <option value="phd">PhD / ዶክትሬት</option>
+              </select>
+            </div>
+            <div class="form-group span-2">
+              <label><span class="am">የትምህርት መስክ</span><span class="en" style="display:none;">Field of Study</span> *</label>
+              <input type="text" name="field_of_study" id="f-field_of_study" required>
+            </div>
+            <div class="form-group span-2">
+              <label><span class="am">ትምህርት ቤት</span><span class="en" style="display:none;">Institution</span></label>
+              <input type="text" name="institution" id="f-institution">
+            </div>
+            <div class="form-group">
+              <label><span class="am">የተመረቁበት ዓ.ም</span><span class="en" style="display:none;">Graduation Year</span></label>
+              <input type="number" name="graduation_year" id="f-graduation_year" min="1990" max="2030">
+            </div>
+            <div class="form-group">
+              <label>GPA / ውጤት</label>
+              <input type="number" name="gpa" id="f-gpa" step="0.01" min="0" max="4">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-label"><span class="am">የሥራ ልምድ</span><span class="en" style="display:none;">Work Experience</span></div>
+          <div class="form-grid">
+            <div class="form-group span-2">
+              <label><span class="am">የሥራ ልምድ (በዓመት)</span><span class="en" style="display:none;">Years of Experience</span> *</label>
+              <input type="number" name="years_of_experience" id="f-years_of_experience" min="0" max="50" required>
+            </div>
+            <div class="form-group span-2">
+              <label><span class="am">አሁን ያሉበት ድርጅት</span><span class="en" style="display:none;">Current Employer</span></label>
+              <input type="text" name="current_employer" id="f-current_employer">
+            </div>
+            <div class="form-group span-2">
+              <label><span class="am">አሁን ያሉበት ቦታ</span><span class="en" style="display:none;">Current Position</span></label>
+              <input type="text" name="current_position" id="f-current_position">
+            </div>
+            <div class="form-group span-4">
+              <label><span class="am">የሥራ ልምድ ዝርዝር</span><span class="en" style="display:none;">Experience Description</span></label>
+              <textarea name="experience_description" id="f-experience_description" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-label"><span class="am">ክህሎቶች</span><span class="en" style="display:none;">Skills & Certifications</span></div>
+          <div class="form-grid">
+            <div class="form-group span-4">
+              <label><span class="am">ክህሎቶች (በኮማ ይለዩ)</span><span class="en" style="display:none;">Skills (comma separated)</span></label>
+              <input type="text" name="skills" id="f-skills" placeholder="e.g. Python, Leadership, Accounting">
+            </div>
+            <div class="form-group span-4">
+              <label><span class="am">ሰርቲፊኬቶች</span><span class="en" style="display:none;">Certifications</span></label>
+              <input type="text" name="certifications" id="f-certifications">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-label">CV / <span class="am">የሕይወት ታሪክ</span><span class="en" style="display:none;">Resume</span></div>
+          <div class="form-group">
+            <label><span class="am">CV ፋይል ጫን (PDF ወይም ምስል)</span><span class="en" style="display:none;">Upload CV (PDF or image)</span></label>
+            <input type="file" name="cv" id="f-cv" accept=".pdf,.jpg,.jpeg,.png">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            <span class="am">ያመልክቱ</span><span class="en" style="display:none;">Submit Application</span>
+          </button>
+          <div class="form-error" id="apply-error"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div id="success-screen" style="display:none;">
+  <div class="success-wrap">
+    <div class="success-icon">✓</div>
+    <h2 class="am">ማመልከቻዎ ተቀብሏል!</h2>
+    <h2 class="en" style="display:none;">Application Submitted!</h2>
+    <p class="am">የማጣቀሻ ቁጥርዎ:</p>
+    <p class="en" style="display:none;">Your reference number:</p>
+    <div class="ref-number" id="success-ref"></div>
+    <p style="color:var(--text-dim);font-size:14px;" class="am">ይህን ቁጥር ያስቀምጡ — ሁኔታዎን ለመከታተል ይጠቅምዎታል</p>
+    <p style="color:var(--text-dim);font-size:14px;" class="en" style="display:none;">Keep this number to track your application status</p>
+    <button class="btn-primary" onclick="showPublic()" style="margin-top:20px;">
+      <span class="am">ወደ ዋና ገጽ</span><span class="en" style="display:none;">Back to Jobs</span>
+    </button>
+  </div>
+</div>
+
+<!-- HR LOGIN -->
+<div id="hr-login-screen" style="display:none;">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-icon">🏛</div>
+      <h2 class="login-title">HR Admin Login</h2>
+      <p class="login-sub">Government Screening System</p>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="hr-username" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="hr-password" autocomplete="current-password">
+      </div>
+      <button class="btn-primary full-width" id="hr-login-submit">Login</button>
+      <div class="form-error" id="hr-login-error"></div>
+      <button class="btn-ghost" onclick="showPublic()" style="width:100%;margin-top:10px;">← Back to Job Listings</button>
+    </div>
+  </div>
+</div>
+
+<!-- HR DASHBOARD -->
+<div id="hr-screen" style="display:none;">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="sidebar-icon">🏛</span>
+      <span class="sidebar-name" id="hr-office-name"></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link active" data-page="dashboard">
+        <span class="nav-icon">⊞</span><span class="nav-label">Dashboard</span>
+      </a>
+      <a class="nav-link" data-page="jobs">
+        <span class="nav-icon">📋</span><span class="nav-label">Job Postings</span>
+      </a>
+      <a class="nav-link" data-page="post-job" id="nav-post-job">
+        <span class="nav-icon">＋</span><span class="nav-label">Post a Job</span>
+      </a>
+      <a class="nav-link" data-page="hr-admins" id="nav-hr-admins" style="display:none;">
+        <span class="nav-icon">🔑</span><span class="nav-label">Admins</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user" id="hr-user-info"></div>
+      <button class="btn-logout" id="hr-logout-btn">Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page">
+      <div class="page-header">
+        <h2 class="page-title">Dashboard</h2>
+      </div>
+      <div class="stats-grid" id="hr-stats-grid"></div>
+    </div>
+
+    <!-- JOB LISTINGS (HR) -->
+    <div id="page-jobs" class="page" style="display:none;">
+      <div class="page-header">
+        <h2 class="page-title">Job Postings</h2>
+        <button class="btn-primary" onclick="hrShowPage('post-job'); resetJobForm();">＋ Post New Job</button>
+      </div>
+      <div id="hr-jobs-list"></div>
+    </div>
+
+    <!-- POST JOB FORM -->
+    <div id="page-post-job" class="page" style="display:none;">
+      <div class="page-header">
+        <h2 class="page-title" id="job-form-title">Post a Job</h2>
+        <button class="btn-ghost" onclick="hrShowPage('jobs'); loadHRJobs();">Cancel</button>
+      </div>
+      <form id="job-form" class="member-form">
+        <input type="hidden" id="edit-job-id">
+        <div class="form-section">
+          <div class="section-label">Job Details</div>
+          <div class="form-grid">
+            <div class="form-group span-2">
+              <label>Job Title (English) *</label>
+              <input type="text" name="title" id="jf-title" required>
+            </div>
+            <div class="form-group span-2">
+              <label>የሥራ ርዕስ (አማርኛ)</label>
+              <input type="text" name="title_am" id="jf-title_am">
+            </div>
+            <div class="form-group span-4">
+              <label>Description (English)</label>
+              <textarea name="description" id="jf-description" rows="3"></textarea>
+            </div>
+            <div class="form-group span-4">
+              <label>መግለጫ (አማርኛ)</label>
+              <textarea name="description_am" id="jf-description_am" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Number of Positions</label>
+              <input type="number" name="positions" id="jf-positions" min="1" value="1">
+            </div>
+            <div class="form-group">
+              <label>Application Deadline</label>
+              <input type="date" name="deadline" id="jf-deadline">
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select name="status" id="jf-status">
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-label">Requirements (used for auto-scoring)</div>
+          <div class="form-grid">
+            <div class="form-group span-2">
+              <label>Minimum Education Level</label>
+              <select name="min_education" id="jf-min_education">
+                <option value="">No requirement</option>
+                <option value="certificate">Certificate</option>
+                <option value="diploma">Diploma</option>
+                <option value="degree">Bachelor's Degree</option>
+                <option value="masters">Master's Degree</option>
+                <option value="phd">PhD</option>
+              </select>
+            </div>
+            <div class="form-group span-2">
+              <label>Required Field of Study</label>
+              <input type="text" name="field_of_study" id="jf-field_of_study" placeholder="e.g. Computer Science, Accounting">
+            </div>
+            <div class="form-group span-2">
+              <label>Minimum Years of Experience</label>
+              <input type="number" name="min_experience" id="jf-min_experience" min="0" value="0">
+            </div>
+            <div class="form-group span-2">
+              <label>Required Skills (comma separated)</label>
+              <input type="text" name="required_skills" id="jf-required_skills" placeholder="e.g. Python, Project Management, GIS">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" id="job-save-btn">Post Job</button>
+          <div class="form-error" id="job-form-error"></div>
+        </div>
+      </form>
+    </div>
+
+    <!-- APPLICANTS FOR A JOB -->
+    <div id="page-applicants" class="page" style="display:none;">
+      <div class="page-header">
+        <button class="btn-ghost" onclick="hrShowPage('jobs'); loadHRJobs();">← Jobs</button>
+        <h2 class="page-title" id="applicants-job-title"></h2>
+        <button class="btn-outline" id="export-applicants-btn">Export Excel</button>
+      </div>
+      <!-- Filters -->
+      <div class="filter-bar">
+        <select id="af-status" class="filter-select">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="shortlisted">Shortlisted</option>
+          <option value="rejected">Rejected</option>
+          <option value="hired">Hired</option>
+        </select>
+        <select id="af-education" class="filter-select">
+          <option value="">All Education</option>
+          <option value="certificate">Certificate</option>
+          <option value="diploma">Diploma</option>
+          <option value="degree">Degree</option>
+          <option value="masters">Masters</option>
+          <option value="phd">PhD</option>
+        </select>
+        <input type="number" id="af-min_score" class="filter-select" placeholder="Min Score %" min="0" max="100" style="max-width:120px;">
+        <input type="number" id="af-min_exp" class="filter-select" placeholder="Min Exp (yrs)" min="0" style="max-width:130px;">
+        <select id="af-sort" class="filter-select">
+          <option value="score">Sort: Score</option>
+          <option value="date">Sort: Date</option>
+          <option value="name">Sort: Name</option>
+        </select>
+        <button class="btn-primary" onclick="loadApplicants()">Filter</button>
+      </div>
+      <div id="applicants-list"></div>
+    </div>
+
+    <!-- APPLICANT DETAIL -->
+    <div id="page-applicant-detail" class="page" style="display:none;">
+      <div class="page-header">
+        <button class="btn-ghost" id="back-to-applicants">← Applicants</button>
+        <div class="header-actions" id="applicant-actions"></div>
+      </div>
+      <div id="applicant-detail-content"></div>
+    </div>
+
+    <!-- ADMINS PAGE -->
+    <div id="page-hr-admins" class="page" style="display:none;">
+      <div class="page-header">
+        <h2 class="page-title">HR Admins</h2>
+        <button class="btn-primary" id="show-add-hr-admin">＋ Add Admin</button>
+      </div>
+      <div id="add-hr-admin-form" class="card" style="display:none;margin-bottom:24px;">
+        <div class="form-grid">
+          <div class="form-group"><label>Username</label><input type="text" id="new-admin-username"></div>
+          <div class="form-group"><label>Password</label><input type="password" id="new-admin-password"></div>
+          <div class="form-group"><label>Office Name</label><input type="text" id="new-admin-office"></div>
+          <div class="form-group"><label>Full Name</label><input type="text" id="new-admin-fullname"></div>
+          <div class="form-group"><label>Role</label>
+            <select id="new-admin-role"><option value="hr">HR</option><option value="super_admin">Super Admin</option></select>
+          </div>
+        </div>
+        <button class="btn-primary" id="save-hr-admin-btn" style="margin-top:12px;">Save Admin</button>
+        <div class="form-error" id="hr-admin-error"></div>
+      </div>
+      <div id="hr-admins-list"></div>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
