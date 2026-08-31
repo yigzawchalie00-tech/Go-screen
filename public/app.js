@@ -2,7 +2,6 @@
 let token = localStorage.getItem('screening_token');
 let currentUser = null;
 let currentJobId = null;
-let currentLang = 'am';
 
 // ── API ───────────────────────────────────────────────────────────
 async function api(method, path, data, isFormData = false) {
@@ -26,13 +25,6 @@ function showToast(msg, type = 'success') {
   t.textContent = msg;
   t.className = `toast ${type} show`;
   setTimeout(() => { t.className = 'toast'; }, 3500);
-}
-
-// ── LANGUAGE ──────────────────────────────────────────────────────
-function toggleLang() {
-  currentLang = currentLang === 'am' ? 'en' : 'am';
-  document.querySelectorAll('.am').forEach(el => el.style.display = currentLang === 'am' ? '' : 'none');
-  document.querySelectorAll('.en').forEach(el => el.style.display = currentLang === 'en' ? '' : 'none');
 }
 
 // ── SCREENS ───────────────────────────────────────────────────────
@@ -82,8 +74,7 @@ async function loadPublicJobs() {
     if (jobs.length === 0) {
       container.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text-dim);padding:60px;">
         <div style="font-size:48px;margin-bottom:12px;">📋</div>
-        <div class="am">በአሁኑ ጊዜ ምንም ክፍት የሥራ ቦታ የለም</div>
-        <div class="en" style="display:none;">No open positions at this time</div>
+        <div>No open positions at this time</div>
       </div>`;
       return;
     }
@@ -91,7 +82,6 @@ async function loadPublicJobs() {
       <div class="job-card" onclick="showApplyForm(${j.id})">
         <div class="job-card-office">${j.office_name}</div>
         <div class="job-card-title">${j.title}</div>
-        ${j.title_am ? `<div class="job-card-title-am">${j.title_am}</div>` : ''}
         <div class="job-card-meta">
           ${j.min_education ? `<span class="job-tag">${j.min_education}</span>` : ''}
           ${j.field_of_study ? `<span class="job-tag">${j.field_of_study}</span>` : ''}
@@ -99,9 +89,7 @@ async function loadPublicJobs() {
           ${j.positions > 1 ? `<span class="job-tag">${j.positions} positions</span>` : ''}
         </div>
         ${j.deadline ? `<div class="job-deadline">📅 Deadline: ${new Date(j.deadline).toLocaleDateString()}</div>` : ''}
-        <button class="apply-btn" style="margin-top:14px;">
-          <span class="am">ያመልክቱ</span><span class="en" style="display:none;">Apply Now</span>
-        </button>
+        <button class="apply-btn" style="margin-top:14px;">Apply Now</button>
       </div>
     `).join('');
   } catch (err) {
@@ -116,7 +104,7 @@ async function showApplyForm(jobId) {
     document.getElementById('apply-job-id').value = jobId;
     document.getElementById('apply-job-title').textContent = job.title;
     document.getElementById('apply-job-info').innerHTML = `
-      <h3>${job.title}${job.title_am ? ' — ' + job.title_am : ''}</h3>
+      <h3>${job.title}</h3>
       <p>${job.office_name}</p>
       ${job.description ? `<p style="margin-top:8px;">${job.description}</p>` : ''}
       ${job.min_education ? `<p style="margin-top:6px;"><strong>Min Education:</strong> ${job.min_education}</p>` : ''}
@@ -205,7 +193,7 @@ async function loadHRJobs() {
     container.innerHTML = jobs.map(j => `
       <div class="hr-job-card">
         <div class="hr-job-info">
-          <div class="hr-job-title">${j.title}${j.title_am ? ' / ' + j.title_am : ''}</div>
+          <div class="hr-job-title">${j.title}</div>
           <div class="hr-job-meta">
             ${j.office_name} · ${j.positions} position(s)
             ${j.deadline ? ` · Deadline: ${new Date(j.deadline).toLocaleDateString()}` : ''}
@@ -241,9 +229,7 @@ async function editJob(id) {
     if (!j) return;
     document.getElementById('edit-job-id').value = id;
     document.getElementById('jf-title').value = j.title || '';
-    document.getElementById('jf-title_am').value = j.title_am || '';
     document.getElementById('jf-description').value = j.description || '';
-    document.getElementById('jf-description_am').value = j.description_am || '';
     document.getElementById('jf-min_education').value = j.min_education || '';
     document.getElementById('jf-field_of_study').value = j.field_of_study || '';
     document.getElementById('jf-min_experience').value = j.min_experience || 0;
@@ -267,9 +253,7 @@ async function submitJobForm(e) {
   const jobId = document.getElementById('edit-job-id').value;
   const data = {
     title: document.getElementById('jf-title').value.trim(),
-    title_am: document.getElementById('jf-title_am').value.trim(),
     description: document.getElementById('jf-description').value.trim(),
-    description_am: document.getElementById('jf-description_am').value.trim(),
     min_education: document.getElementById('jf-min_education').value,
     field_of_study: document.getElementById('jf-field_of_study').value.trim(),
     min_experience: parseInt(document.getElementById('jf-min_experience').value) || 0,
@@ -363,7 +347,6 @@ async function viewApplicant(id) {
         <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
           <div>
             <h2 style="font-size:20px;font-weight:700;">${a.full_name}</h2>
-            ${a.full_name_am ? `<div style="color:var(--text-dim);font-size:14px;">${a.full_name_am}</div>` : ''}
             <div style="margin-top:6px;"><span class="status-badge status-${a.status}">${a.status}</span></div>
           </div>
           <div style="margin-left:auto;text-align:center;">
@@ -434,171 +417,4 @@ async function viewApplicant(id) {
         ${a.cv_url ? `
         <div class="detail-section">
           <div class="detail-section-label">CV / Resume</div>
-          <a href="${a.cv_url}" target="_blank" class="btn-primary" style="display:inline-block;">View CV / Download</a>
-        </div>` : ''}
-
-        <div class="hr-decision">
-          <h4>HR Decision</h4>
-          <select class="status-select" id="decision-status">
-            <option value="pending" ${a.status === 'pending' ? 'selected' : ''}>Pending</option>
-            <option value="shortlisted" ${a.status === 'shortlisted' ? 'selected' : ''}>Shortlisted</option>
-            <option value="rejected" ${a.status === 'rejected' ? 'selected' : ''}>Rejected</option>
-            <option value="hired" ${a.status === 'hired' ? 'selected' : ''}>Hired</option>
-          </select>
-          <textarea class="hr-notes-input" id="decision-notes" rows="3" placeholder="HR notes...">${a.hr_notes || ''}</textarea>
-          <button class="btn-primary" onclick="saveDecision(${a.id})">Save Decision</button>
-        </div>
-
-        <div style="margin-top:12px;font-size:12px;color:var(--text-dim);">
-          Reference: ${a.reference_number} · Submitted: ${new Date(a.submitted_at).toLocaleString()}
-        </div>
-      </div>
-    `;
-  } catch (err) {
-    showToast('Could not load applicant', 'error');
-  }
-}
-
-async function saveDecision(id) {
-  try {
-    await api('PATCH', `/api/applications/${id}`, {
-      status: document.getElementById('decision-status').value,
-      hr_notes: document.getElementById('decision-notes').value,
-    });
-    showToast('Decision saved!', 'success');
-  } catch (err) {
-    showToast('Could not save decision', 'error');
-  }
-}
-
-// ── HR: EXPORT ────────────────────────────────────────────────────
-async function exportApplicants() {
-  if (!currentJobId) return;
-  try {
-    const rows = await api('GET', `/api/jobs/${currentJobId}/export`);
-    const ws = XLSX.utils.json_to_sheet(rows.map(a => ({
-      'Reference': a.reference_number,
-      'Full Name': a.full_name,
-      'Phone': a.phone || '',
-      'Email': a.email || '',
-      'Gender': a.gender || '',
-      'Education Level': a.education_level || '',
-      'Field of Study': a.field_of_study || '',
-      'Institution': a.institution || '',
-      'Graduation Year': a.graduation_year || '',
-      'GPA': a.gpa || '',
-      'Years of Experience': a.years_of_experience || 0,
-      'Current Employer': a.current_employer || '',
-      'Current Position': a.current_position || '',
-      'Skills': a.skills || '',
-      'Certifications': a.certifications || '',
-      'Match Score (%)': a.match_score,
-      'Status': a.status,
-      'HR Notes': a.hr_notes || '',
-      'Submitted': new Date(a.submitted_at).toLocaleDateString(),
-    })));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Applicants');
-    XLSX.writeFile(wb, `applicants-job-${currentJobId}-${new Date().toISOString().split('T')[0]}.xlsx`);
-    showToast('Exported!', 'success');
-  } catch (err) {
-    showToast('Export failed', 'error');
-  }
-}
-
-// ── HR: ADMINS ────────────────────────────────────────────────────
-async function loadHRAdmins() {
-  try {
-    const admins = await api('GET', '/api/admins');
-    document.getElementById('hr-admins-list').innerHTML = `
-      <div class="card">
-        ${admins.map(a => `
-          <div class="admin-row">
-            <div>
-              <div style="font-weight:600;">${a.full_name || a.username}</div>
-              <div style="font-size:12px;color:var(--text-dim);">@${a.username} · ${a.office_name}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span class="badge badge-count">${a.role}</span>
-              ${a.role !== 'super_admin' ? `<button class="btn-danger" onclick="deleteHRAdmin(${a.id})" style="padding:5px 10px;font-size:12px;">✕</button>` : ''}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  } catch (err) {
-    showToast('Could not load admins', 'error');
-  }
-}
-
-async function saveHRAdmin() {
-  const errEl = document.getElementById('hr-admin-error');
-  errEl.textContent = '';
-  try {
-    await api('POST', '/api/admins', {
-      username: document.getElementById('new-admin-username').value.trim(),
-      password: document.getElementById('new-admin-password').value,
-      office_name: document.getElementById('new-admin-office').value.trim(),
-      full_name: document.getElementById('new-admin-fullname').value.trim(),
-      role: document.getElementById('new-admin-role').value,
-    });
-    document.getElementById('add-hr-admin-form').style.display = 'none';
-    showToast('Admin added!', 'success');
-    loadHRAdmins();
-  } catch (err) {
-    errEl.textContent = err.message;
-  }
-}
-
-async function deleteHRAdmin(id) {
-  if (!confirm('Remove this admin?')) return;
-  try {
-    await api('DELETE', `/api/admins/${id}`);
-    showToast('Admin removed.', 'success');
-    loadHRAdmins();
-  } catch (err) {
-    showToast('Could not remove admin', 'error');
-  }
-}
-
-// ── EVENT WIRING ──────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('hr-login-btn').addEventListener('click', showHRLogin);
-  document.getElementById('hr-login-submit').addEventListener('click', hrLogin);
-  document.getElementById('hr-password').addEventListener('keydown', e => { if (e.key === 'Enter') hrLogin(); });
-  document.getElementById('hr-logout-btn').addEventListener('click', hrLogout);
-  document.getElementById('apply-form').addEventListener('submit', submitApplication);
-  document.getElementById('job-form').addEventListener('submit', submitJobForm);
-  document.getElementById('export-applicants-btn').addEventListener('click', exportApplicants);
-
-  document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      const page = link.dataset.page;
-      hrShowPage(page);
-      if (page === 'dashboard') loadHRStats();
-      else if (page === 'jobs') loadHRJobs();
-      else if (page === 'post-job') resetJobForm();
-      else if (page === 'hr-admins') loadHRAdmins();
-    });
-  });
-
-  document.getElementById('show-add-hr-admin').addEventListener('click', () => {
-    const f = document.getElementById('add-hr-admin-form');
-    f.style.display = f.style.display === 'none' ? 'block' : 'none';
-  });
-  document.getElementById('save-hr-admin-btn').addEventListener('click', saveHRAdmin);
-
-  // Check existing session
-  if (token) {
-    try {
-      currentUser = await api('GET', '/api/auth/me');
-      showHRDashboard();
-      return;
-    } catch {
-      token = null;
-      localStorage.removeItem('screening_token');
-    }
-  }
-
-  showPublic();
-});
+          <a href="${a.cv_url}" target="_blank" class="btn-primary" style="display:inline-block;">View CV / Down
