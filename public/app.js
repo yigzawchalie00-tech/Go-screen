@@ -119,6 +119,18 @@ async function showApplyForm(jobId) {
     `;
     document.getElementById('apply-form').reset();
     document.getElementById('apply-error').textContent = '';
+
+    const expGroup = document.getElementById('fg-years_of_experience');
+    const expInput = document.getElementById('f-years_of_experience');
+    if (job.min_experience === 0 || !job.min_experience) {
+      expGroup.style.display = 'none';
+      expInput.required = false;
+      expInput.value = '0';
+    } else {
+      expGroup.style.display = '';
+      expInput.required = true;
+    }
+
     document.getElementById('public-screen').style.display = 'none';
     document.getElementById('apply-screen').style.display = 'block';
     window.scrollTo(0, 0);
@@ -398,6 +410,7 @@ async function viewApplicant(id) {
             <div class="detail-field"><label>Institution</label><span>${f(a.institution)}</span></div>
             <div class="detail-field"><label>Graduation Year</label><span>${f(a.graduation_year)}</span></div>
             <div class="detail-field"><label>GPA</label><span>${f(a.gpa)}</span></div>
+            <div class="detail-field"><label>National Exit Exam</label><span>${f(a.exit_exam_score)}</span></div>
           </div>
         </div>
 
