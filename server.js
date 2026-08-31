@@ -201,11 +201,11 @@ app.post('/api/apply/:jobId', applyLimiter, uploadCV.single('cv'), async (req, r
       INSERT INTO applications (
         job_id, reference_number,
         full_name, full_name_am, email, phone, gender, date_of_birth, region, woreda,
-        education_level, field_of_study, institution, graduation_year, gpa,
+        education_level, field_of_study, institution, graduation_year, gpa, exit_exam_score,
         years_of_experience, current_employer, current_position, experience_description,
         skills, certifications, cv_url, cv_public_id,
         match_score, score_breakdown
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
       RETURNING id, reference_number, match_score`,
       [
         req.params.jobId, ref,
@@ -214,6 +214,7 @@ app.post('/api/apply/:jobId', applyLimiter, uploadCV.single('cv'), async (req, r
         f.education_level, f.field_of_study, f.institution,
         f.graduation_year ? parseInt(f.graduation_year) : null,
         f.gpa ? parseFloat(f.gpa) : null,
+        f.exit_exam_score ? parseFloat(f.exit_exam_score) : null,
         parseInt(f.years_of_experience) || 0,
         f.current_employer, f.current_position, f.experience_description,
         f.skills, f.certifications,
@@ -302,7 +303,7 @@ app.get('/api/jobs/:jobId/export', requireAuth(), async (req, res) => {
     const result = await pool.query(`
       SELECT reference_number, full_name, email, phone, gender, date_of_birth,
              region, woreda, education_level, field_of_study, institution,
-             graduation_year, gpa, years_of_experience, current_employer,
+             graduation_year, gpa, exit_exam_score, years_of_experience, current_employer,
              current_position, skills, certifications, match_score, status,
              hr_notes, submitted_at
       FROM applications WHERE job_id=$1 ORDER BY match_score DESC`,
