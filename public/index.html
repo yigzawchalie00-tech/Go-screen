@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Government Employee Screening System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,25 +14,15 @@
 <div id="public-screen">
   <header class="pub-header">
     <div class="pub-header-inner">
-      <div>
-        <div class="pub-title-am">የሥራ ማስታወቂያ ሥርዓት</div>
-        <div class="pub-title-en">Government Employment Screening System</div>
-      </div>
+      <div class="pub-title-en">Civil Service Recruitment Portal</div>
       <button class="btn-outline" id="hr-login-btn">HR Login</button>
     </div>
   </header>
 
   <div class="pub-content">
     <div class="pub-hero">
-      <h2 class="pub-hero-title" id="lang-toggle-pub">
-        <span class="am">ክፍት የሥራ ቦታዎች</span>
-        <span class="en" style="display:none;">Open Job Positions</span>
-      </h2>
-      <p class="pub-hero-sub">
-        <span class="am">ለሚፈልጉት ሥራ ያመልክቱ — ሁሉም መረጃዎ ስሉጥ ይሆናሉ</span>
-        <span class="en" style="display:none;">Apply for a position — your information will be reviewed carefully</span>
-      </p>
-      <button class="lang-btn" onclick="toggleLang()">English / አማርኛ</button>
+      <h2 class="pub-hero-title">Open Positions</h2>
+      <p class="pub-hero-sub">Browse current vacancies and submit your application below.</p>
     </div>
     <div id="jobs-list" class="jobs-grid"></div>
   </div>
@@ -42,7 +32,7 @@
 <div id="apply-screen" style="display:none;">
   <header class="pub-header">
     <div class="pub-header-inner">
-      <button class="btn-ghost" onclick="showPublic()">← <span class="am">ወደ ዝርዝር</span><span class="en" style="display:none;">Back</span></button>
+      <button class="btn-ghost" onclick="showPublic()">← Back</button>
       <div class="pub-title-en" id="apply-job-title"></div>
     </div>
   </header>
@@ -53,38 +43,34 @@
         <input type="hidden" id="apply-job-id">
 
         <div class="form-section">
-          <div class="section-label"><span class="am">የግል መረጃ</span><span class="en" style="display:none;">Personal Info</span></div>
+          <div class="section-label">Personal Info</div>
           <div class="form-grid">
-            <div class="form-group span-2">
-              <label><span class="am">ሙሉ ስም (በአማርኛ)</span><span class="en" style="display:none;">Full Name (Amharic)</span></label>
-              <input type="text" name="full_name_am" id="f-full_name_am">
-            </div>
-            <div class="form-group span-2">
-              <label><span class="am">Full Name (English)</span><span class="en" style="display:none;">Full Name (English) *</span> *</label>
+            <div class="form-group span-4">
+              <label>Full Name *</label>
               <input type="text" name="full_name" id="f-full_name" required>
             </div>
             <div class="form-group">
-              <label><span class="am">ጾታ</span><span class="en" style="display:none;">Gender</span></label>
+              <label>Gender</label>
               <select name="gender" id="f-gender">
                 <option value="">—</option>
-                <option value="Male">Male / ወንድ</option>
-                <option value="Female">Female / ሴት</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
             </div>
             <div class="form-group">
-              <label><span class="am">የትዉልድ ቀን</span><span class="en" style="display:none;">Date of Birth</span></label>
+              <label>Date of Birth</label>
               <input type="date" name="date_of_birth" id="f-date_of_birth">
             </div>
             <div class="form-group">
-              <label><span class="am">ክልል</span><span class="en" style="display:none;">Region</span></label>
+              <label>Region</label>
               <input type="text" name="region" id="f-region">
             </div>
             <div class="form-group">
-              <label><span class="am">ወረዳ</span><span class="en" style="display:none;">Woreda</span></label>
+              <label>Woreda</label>
               <input type="text" name="woreda" id="f-woreda">
             </div>
             <div class="form-group span-2">
-              <label><span class="am">ስልክ</span><span class="en" style="display:none;">Phone</span> *</label>
+              <label>Phone *</label>
               <input type="tel" name="phone" id="f-phone" required>
             </div>
             <div class="form-group span-2">
@@ -95,86 +81,84 @@
         </div>
 
         <div class="form-section">
-          <div class="section-label"><span class="am">ትምህርት</span><span class="en" style="display:none;">Education</span></div>
+          <div class="section-label">Education</div>
           <div class="form-grid">
             <div class="form-group span-2">
-              <label><span class="am">የትምህርት ደረጃ</span><span class="en" style="display:none;">Education Level</span> *</label>
+              <label>Education Level *</label>
               <select name="education_level" id="f-education_level" required>
                 <option value="">—</option>
-                <option value="certificate">Certificate / ሰርቲፊኬት</option>
-                <option value="diploma">Diploma / ዲፕሎማ</option>
-                <option value="degree">Bachelor's Degree / ዲግሪ</option>
-                <option value="masters">Master's Degree / ማስተርስ</option>
-                <option value="phd">PhD / ዶክትሬት</option>
+                <option value="certificate">Certificate</option>
+                <option value="diploma">Diploma</option>
+                <option value="degree">Bachelor's Degree</option>
+                <option value="masters">Master's Degree</option>
+                <option value="phd">PhD</option>
               </select>
             </div>
             <div class="form-group span-2">
-              <label><span class="am">የትምህርት መስክ</span><span class="en" style="display:none;">Field of Study</span> *</label>
+              <label>Field of Study *</label>
               <input type="text" name="field_of_study" id="f-field_of_study" required>
             </div>
             <div class="form-group span-2">
-              <label><span class="am">ትምህርት ቤት</span><span class="en" style="display:none;">Institution</span></label>
+              <label>Institution</label>
               <input type="text" name="institution" id="f-institution">
             </div>
             <div class="form-group">
-              <label><span class="am">የተመረቁበት ዓ.ም</span><span class="en" style="display:none;">Graduation Year</span></label>
+              <label>Graduation Year</label>
               <input type="number" name="graduation_year" id="f-graduation_year" min="1990" max="2030">
             </div>
             <div class="form-group">
-              <label>GPA / ውጤት</label>
+              <label>GPA</label>
               <input type="number" name="gpa" id="f-gpa" step="0.01" min="0" max="4">
             </div>
           </div>
         </div>
 
         <div class="form-section">
-          <div class="section-label"><span class="am">የሥራ ልምድ</span><span class="en" style="display:none;">Work Experience</span></div>
+          <div class="section-label">Work Experience</div>
           <div class="form-grid">
             <div class="form-group span-2">
-              <label><span class="am">የሥራ ልምድ (በዓመት)</span><span class="en" style="display:none;">Years of Experience</span> *</label>
+              <label>Years of Experience *</label>
               <input type="number" name="years_of_experience" id="f-years_of_experience" min="0" max="50" required>
             </div>
             <div class="form-group span-2">
-              <label><span class="am">አሁን ያሉበት ድርጅት</span><span class="en" style="display:none;">Current Employer</span></label>
+              <label>Current Employer</label>
               <input type="text" name="current_employer" id="f-current_employer">
             </div>
             <div class="form-group span-2">
-              <label><span class="am">አሁን ያሉበት ቦታ</span><span class="en" style="display:none;">Current Position</span></label>
+              <label>Current Position</label>
               <input type="text" name="current_position" id="f-current_position">
             </div>
             <div class="form-group span-4">
-              <label><span class="am">የሥራ ልምድ ዝርዝር</span><span class="en" style="display:none;">Experience Description</span></label>
+              <label>Experience Description</label>
               <textarea name="experience_description" id="f-experience_description" rows="3"></textarea>
             </div>
           </div>
         </div>
 
         <div class="form-section">
-          <div class="section-label"><span class="am">ክህሎቶች</span><span class="en" style="display:none;">Skills & Certifications</span></div>
+          <div class="section-label">Skills &amp; Certifications</div>
           <div class="form-grid">
             <div class="form-group span-4">
-              <label><span class="am">ክህሎቶች (በኮማ ይለዩ)</span><span class="en" style="display:none;">Skills (comma separated)</span></label>
+              <label>Skills (comma separated)</label>
               <input type="text" name="skills" id="f-skills" placeholder="e.g. Python, Leadership, Accounting">
             </div>
             <div class="form-group span-4">
-              <label><span class="am">ሰርቲፊኬቶች</span><span class="en" style="display:none;">Certifications</span></label>
+              <label>Certifications</label>
               <input type="text" name="certifications" id="f-certifications">
             </div>
           </div>
         </div>
 
         <div class="form-section">
-          <div class="section-label">CV / <span class="am">የሕይወት ታሪክ</span><span class="en" style="display:none;">Resume</span></div>
+          <div class="section-label">CV / Resume</div>
           <div class="form-group">
-            <label><span class="am">CV ፋይል ጫን (PDF ወይም ምስል)</span><span class="en" style="display:none;">Upload CV (PDF or image)</span></label>
+            <label>Upload CV (PDF or image)</label>
             <input type="file" name="cv" id="f-cv" accept=".pdf,.jpg,.jpeg,.png">
           </div>
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-primary">
-            <span class="am">ያመልክቱ</span><span class="en" style="display:none;">Submit Application</span>
-          </button>
+          <button type="submit" class="btn-primary">Submit Application</button>
           <div class="form-error" id="apply-error"></div>
         </div>
       </form>
@@ -186,16 +170,11 @@
 <div id="success-screen" style="display:none;">
   <div class="success-wrap">
     <div class="success-icon">✓</div>
-    <h2 class="am">ማመልከቻዎ ተቀብሏል!</h2>
-    <h2 class="en" style="display:none;">Application Submitted!</h2>
-    <p class="am">የማጣቀሻ ቁጥርዎ:</p>
-    <p class="en" style="display:none;">Your reference number:</p>
+    <h2>Application Submitted</h2>
+    <p>Your reference number:</p>
     <div class="ref-number" id="success-ref"></div>
-    <p style="color:var(--text-dim);font-size:14px;" class="am">ይህን ቁጥር ያስቀምጡ — ሁኔታዎን ለመከታተል ይጠቅምዎታል</p>
-    <p style="color:var(--text-dim);font-size:14px;" class="en" style="display:none;">Keep this number to track your application status</p>
-    <button class="btn-primary" onclick="showPublic()" style="margin-top:20px;">
-      <span class="am">ወደ ዋና ገጽ</span><span class="en" style="display:none;">Back to Jobs</span>
-    </button>
+    <p style="color:var(--text-dim);font-size:14px;">Keep this number to track your application status.</p>
+    <button class="btn-primary" onclick="showPublic()" style="margin-top:20px;">Back to Jobs</button>
   </div>
 </div>
 
@@ -277,21 +256,13 @@
         <div class="form-section">
           <div class="section-label">Job Details</div>
           <div class="form-grid">
-            <div class="form-group span-2">
-              <label>Job Title (English) *</label>
+            <div class="form-group span-4">
+              <label>Job Title *</label>
               <input type="text" name="title" id="jf-title" required>
             </div>
-            <div class="form-group span-2">
-              <label>የሥራ ርዕስ (አማርኛ)</label>
-              <input type="text" name="title_am" id="jf-title_am">
-            </div>
             <div class="form-group span-4">
-              <label>Description (English)</label>
+              <label>Description</label>
               <textarea name="description" id="jf-description" rows="3"></textarea>
-            </div>
-            <div class="form-group span-4">
-              <label>መግለጫ (አማርኛ)</label>
-              <textarea name="description_am" id="jf-description_am" rows="3"></textarea>
             </div>
             <div class="form-group">
               <label>Number of Positions</label>
@@ -420,4 +391,4 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="app.js"></script>
 </body>
-</html>
+      </html>
