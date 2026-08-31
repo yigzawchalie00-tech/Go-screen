@@ -1,3 +1,8 @@
+// ── TEMP DEBUG: remove after HR login issue is confirmed fixed ─────
+window.addEventListener('error', function(e) {
+  alert('JS ERROR: ' + e.message + ' (line ' + e.lineno + ')');
+});
+
 // ── STATE ─────────────────────────────────────────────────────────
 let token = localStorage.getItem('screening_token');
 let currentUser = null;
@@ -417,4 +422,176 @@ async function viewApplicant(id) {
         ${a.cv_url ? `
         <div class="detail-section">
           <div class="detail-section-label">CV / Resume</div>
-          <a href="${a.cv_url}" target="_blank" class="btn-primary" style="display:inline-block;">View CV / Down
+          <a href="${a.cv_url}" target="_blank" class="btn-primary" style="display:inline-block;">View CV / Download</a>
+        </div>` : ''}
+
+        <div class="hr-decision">
+          <h4>HR Decision</h4>
+          <select class="status-select" id="decision-status">
+            <option value="pending" ${a.status === 'pending' ? 'selected' : ''}>Pending</option>
+            <option value="shortlisted" ${a.status === 'shortlisted' ? 'selected' : ''}>Shortlisted</option>
+            <option value="rejected" ${a.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+            <option value="hired" ${a.status === 'hired' ? 'selected' : ''}>Hired</option>
+          </select>
+          <textarea class="hr-notes-input" id="decision-notes" rows="3" placeholder="HR notes...">${a.hr_notes || ''}</textarea>
+          <button class="btn-primary" onclick="saveDecision(${a.id})">Save Decision</button>
+        </div>
+
+        <div style="margin-top:12px;font-size:12px;color:var(--text-dim);">
+          Reference: ${a.reference_number} · Submitted: ${new Date(a.submitted_at).toLocaleString()}
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    showToast('Could not load applicant', 'error');
+  }
+}
+
+async function saveDecision(id) {
+  try {
+    await api('PATCH', `/api/applications/${id}`, {
+      status: document.getElementById('decision-status').value,
+      hr_notes: document.getElementById('decision-notes').value,
+    });
+    showToast('Decision saved!', 'success');
+  } catch (err) {
+    showToast('Could not save decision', 'error');
+  }
+}
+
+// ── HR: EXPORT ────────────────────────────────────────────────────
+async function exportApplicants() {
+  if (!currentJobId) return;
+  try {
+    const rows = await api('GET', `/api/jobs/${currentJobId}/export`);
+    const ws = XLSX.utils.json_to_sheet(rows.map(a => ({
+      'Reference': a.reference_number,
+      'Full Name': a.full_name,
+      'Phone': a.phone || '',
+      'Email': a.email || '',
+      'Gender': a.gender || '',
+      'Education Level': a.education_level || '',
+      'Field of Study': a.field_of_study || '',
+      'Institution': a.institution || '',
+      'Graduation Year': a.graduation_year || '',
+      'GPA': a.gpa || '',
+      'Years of Experience': a.years_of_experience || 0,
+      'Current Employer': a.current_employer || '',
+      'Current Position': a.current_position || '',
+      'Skills': a.skills || '',
+      'Certifications': a.certifications || '',
+      'Match Score (%)': a.match_score,
+      'Status': a.status,
+      'HR Notes': a.hr_notes || '',
+      'Submitted': new Date(a.submitted_at).toLocaleDateString(),
+    })));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Applicants');
+    XLSX.writeFile(wb, `applicants-job-${currentJobId}-${new Date().toISOString().split('T')[0]}.xlsx`);
+    showToast('Exported!', 'success');
+  } catch (err) {
+    showToast('Export failed', 'error');
+  }
+}
+
+// ── HR: ADMINS ────────────────────────────────────────────────────
+async function loadHRAdmins() {
+  try {
+    const admins = await api('GET', '/api/admins');
+    document.getElementById('hr-admins-list').innerHTML = `
+      <div class="card">
+        ${admins.map(a => `
+          <div class="admin-row">
+            <div>
+              <div style="font-weight:600;">${a.full_name || a.username}</div>
+              <div style="font-size:12px;color:var(--text-dim);">@${a.username} · ${a.office_name}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="badge badge-count">${a.role}</span>
+              ${a.role !== 'super_admin' ? `<button class="btn-danger" onclick="deleteHRAdmin(${a.id})" style="padding:5px 10px;font-size:12px;">✕</button>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch (err) {
+    showToast('Could not load admins', 'error');
+  }
+}
+
+async function saveHRAdmin() {
+  const errEl = document.getElementById('hr-admin-error');
+  errEl.textContent = '';
+  try {
+    await api('POST', '/api/admins', {
+      username: document.getElementById('new-admin-username').value.trim(),
+      password: document.getElementById('new-admin-password').value,
+      office_name: document.getElementById('new-admin-office').value.trim(),
+      full_name: document.getElementById('new-admin-fullname').value.trim(),
+      role: document.getElementById('new-admin-role').value,
+    });
+    document.getElementById('add-hr-admin-form').style.display = 'none';
+    showToast('Admin added!', 'success');
+    loadHRAdmins();
+  } catch (err) {
+    errEl.textContent = err.message;
+  }
+}
+
+async function deleteHRAdmin(id) {
+  if (!confirm('Remove this admin?')) return;
+  try {
+    await api('DELETE', `/api/admins/${id}`);
+    showToast('Admin removed.', 'success');
+    loadHRAdmins();
+  } catch (err) {
+    showToast('Could not remove admin', 'error');
+  }
+}
+
+// ── EVENT WIRING ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+ try {
+  document.getElementById('hr-login-btn').addEventListener('click', showHRLogin);
+  document.getElementById('hr-login-submit').addEventListener('click', hrLogin);
+  document.getElementById('hr-password').addEventListener('keydown', e => { if (e.key === 'Enter') hrLogin(); });
+  document.getElementById('hr-logout-btn').addEventListener('click', hrLogout);
+  document.getElementById('apply-form').addEventListener('submit', submitApplication);
+  document.getElementById('job-form').addEventListener('submit', submitJobForm);
+  document.getElementById('export-applicants-btn').addEventListener('click', exportApplicants);
+
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      const page = link.dataset.page;
+      hrShowPage(page);
+      if (page === 'dashboard') loadHRStats();
+      else if (page === 'jobs') loadHRJobs();
+      else if (page === 'post-job') resetJobForm();
+      else if (page === 'hr-admins') loadHRAdmins();
+    });
+  });
+
+  document.getElementById('show-add-hr-admin').addEventListener('click', () => {
+    const f = document.getElementById('add-hr-admin-form');
+    f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  });
+  document.getElementById('save-hr-admin-btn').addEventListener('click', saveHRAdmin);
+ } catch (setupErr) {
+  alert('SETUP ERROR: ' + setupErr.message);
+  return;
+ }
+
+  // Check existing session
+  if (token) {
+    try {
+      currentUser = await api('GET', '/api/auth/me');
+      showHRDashboard();
+      return;
+    } catch {
+      token = null;
+      localStorage.removeItem('screening_token');
+    }
+  }
+
+  showPublic();
+});
