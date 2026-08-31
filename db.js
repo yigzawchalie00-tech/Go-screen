@@ -64,6 +64,7 @@ async function initDB() {
         institution VARCHAR(200),
         graduation_year INTEGER,
         gpa NUMERIC(3,2),
+        exit_exam_score NUMERIC(5,2),
 
         -- Experience
         years_of_experience INTEGER DEFAULT 0,
@@ -99,6 +100,7 @@ async function initDB() {
 
       -- Migrations for existing tables
       ALTER TABLE applications ALTER COLUMN cv_url TYPE TEXT;
+      ALTER TABLE applications ADD COLUMN IF NOT EXISTS exit_exam_score NUMERIC(5,2);
     `);
     console.log('Database initialized.');
   } catch (err) {
