@@ -113,6 +113,13 @@ function formatDescription(str) {
 }
 
 // ── PUBLIC: APPLY FORM ────────────────────────────────────────────
+function revealApplyForm() {
+  document.getElementById('show-apply-form-btn').style.display = 'none';
+  const card = document.getElementById('apply-form-card');
+  card.style.display = '';
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 async function showApplyForm(jobId) {
   try {
     const job = await api('GET', `/api/jobs/public/${jobId}`);
@@ -122,11 +129,15 @@ async function showApplyForm(jobId) {
       <h3>${job.title}</h3>
       <p>${job.office_name}</p>
       ${job.description ? `<p style="margin-top:8px;">${formatDescription(job.description)}</p>` : ''}
-      ${job.min_education ? `<p style="margin-top:6px;"><strong>Min Education:</strong> ${job.min_education}</p>` : ''}
-      ${job.field_of_study ? `<p><strong>Field:</strong> ${job.field_of_study}</p>` : ''}
-      ${job.min_experience > 0 ? `<p><strong>Min Experience:</strong> ${job.min_experience} years</p>` : ''}
-      ${job.required_skills ? `<p><strong>Required Skills:</strong> ${job.required_skills}</p>` : ''}
+      <div class="job-facts">
+        ${job.min_education ? `<p><strong>Min Education:</strong> ${job.min_education}</p>` : ''}
+        ${job.field_of_study ? `<p><strong>Field:</strong> ${job.field_of_study}</p>` : ''}
+        ${job.min_experience > 0 ? `<p><strong>Min Experience:</strong> ${job.min_experience} years</p>` : ''}
+        ${job.required_skills ? `<p><strong>Required Skills:</strong> ${job.required_skills}</p>` : ''}
+      </div>
     `;
+    document.getElementById('apply-form-card').style.display = 'none';
+    document.getElementById('show-apply-form-btn').style.display = '';
     document.getElementById('apply-form').reset();
     document.getElementById('apply-error').textContent = '';
 
