@@ -23,4 +23,20 @@ const uploadCV = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max for CVs
 });
 
-module.exports = { uploadCV, cloudinary };
+// Organization photo upload — images only, stored in a separate folder
+const orgPhotoStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'gov-screening/org-photos',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    resource_type: 'image',
+    transformation: [{ width: 800, height: 800, crop: 'limit' }],
+  },
+});
+
+const uploadOrgPhoto = multer({
+  storage: orgPhotoStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max for org photos
+});
+
+module.exports = { uploadCV, uploadOrgPhoto, cloudinary };
