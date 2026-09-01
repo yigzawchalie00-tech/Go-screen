@@ -102,6 +102,16 @@ async function loadPublicJobs() {
   }
 }
 
+// ── TEXT HELPERS ──────────────────────────────────────────────────
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+function formatDescription(str) {
+  return escapeHtml(str).replace(/\n/g, '<br>');
+}
+
 // ── PUBLIC: APPLY FORM ────────────────────────────────────────────
 async function showApplyForm(jobId) {
   try {
@@ -111,7 +121,7 @@ async function showApplyForm(jobId) {
     document.getElementById('apply-job-info').innerHTML = `
       <h3>${job.title}</h3>
       <p>${job.office_name}</p>
-      ${job.description ? `<p style="margin-top:8px;">${job.description}</p>` : ''}
+      ${job.description ? `<p style="margin-top:8px;">${formatDescription(job.description)}</p>` : ''}
       ${job.min_education ? `<p style="margin-top:6px;"><strong>Min Education:</strong> ${job.min_education}</p>` : ''}
       ${job.field_of_study ? `<p><strong>Field:</strong> ${job.field_of_study}</p>` : ''}
       ${job.min_experience > 0 ? `<p><strong>Min Experience:</strong> ${job.min_experience} years</p>` : ''}
