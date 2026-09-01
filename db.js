@@ -28,6 +28,7 @@ async function initDB() {
         title VARCHAR(200) NOT NULL,             -- job title
         title_am VARCHAR(200),                   -- Amharic title
         office_name VARCHAR(200) NOT NULL,       -- which office posted this
+        org_photo_url TEXT,                      -- organization photo/logo
         description TEXT,
         description_am TEXT,
         -- Requirements (used for auto-scoring)
@@ -101,6 +102,7 @@ async function initDB() {
       -- Migrations for existing tables
       ALTER TABLE applications ALTER COLUMN cv_url TYPE TEXT;
       ALTER TABLE applications ADD COLUMN IF NOT EXISTS exit_exam_score NUMERIC(5,2);
+      ALTER TABLE jobs ADD COLUMN IF NOT EXISTS org_photo_url TEXT;
     `);
     console.log('Database initialized.');
   } catch (err) {
