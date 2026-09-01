@@ -37,8 +37,11 @@
     </div>
   </header>
   <div class="pub-content">
-    <div class="apply-card">
-      <div class="apply-job-info" id="apply-job-info"></div>
+    <div class="job-info-card" id="apply-job-info"></div>
+    <div class="apply-cta-wrap">
+      <button class="btn-primary" id="show-apply-form-btn" onclick="revealApplyForm()">Apply for this Position</button>
+    </div>
+    <div class="apply-card" id="apply-form-card" style="display:none;">
       <form id="apply-form" enctype="multipart/form-data">
         <input type="hidden" id="apply-job-id">
 
@@ -395,4 +398,4 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="app.js"></script>
 </body>
-</html>
+    </html>
