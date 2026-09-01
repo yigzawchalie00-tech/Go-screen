@@ -67,10 +67,15 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .apply-btn:hover { opacity: 0.88; }
 
 /* ── APPLY FORM ──────────────────────────────────────────────────── */
-.apply-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; max-width: 700px; margin: 0 auto; }
-.apply-job-info { background: var(--accent-light); border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; }
-.apply-job-info h3 { font-family: var(--serif); font-size: 18px; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
-.apply-job-info p { font-size: 15px; line-height: 1.6; color: var(--text); }
+.apply-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; max-width: 700px; margin: 24px auto 0; }
+.job-info-card { background: var(--accent-light); border: 1px solid rgba(26,79,140,0.15); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 22px; max-width: 700px; margin: 0 auto; }
+.job-info-card h3 { font-family: var(--serif); font-size: 18px; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+.job-info-card p { font-size: 15px; line-height: 1.6; color: var(--text); margin-bottom: 12px; }
+.job-info-card p:last-child { margin-bottom: 0; }
+.job-info-card .job-facts { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(26,79,140,0.15); }
+.job-info-card .job-facts p { margin-bottom: 8px; }
+.apply-cta-wrap { max-width: 700px; margin: 18px auto 0; text-align: center; }
+.apply-cta-wrap .btn-primary { padding: 12px 32px; font-size: 15px; }
 
 /* ── SUCCESS ────────────────────────────────────────────────────── */
 .success-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
@@ -209,5 +214,5 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
   .form-group.span-2, .form-group.span-4 { grid-column: span 1; }
   .pub-content { padding: 20px 12px; }
   .apply-card { padding: 16px; }
-  .apply-job-info { padding: 12px 14px; margin-bottom: 18px; }
+  .job-info-card { padding: 14px 16px; }
   }
