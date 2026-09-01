@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcryptjs');
 const { pool, initDB } = require('./db');
 const { generateToken, requireAuth, seedAdmin } = require('./auth');
-const { uploadCV, cloudinary } = require('./upload');
+const { uploadCV, uploadOrgPhoto, cloudinary } = require('./upload');
 const { scoreApplication } = require('./scoring');
 
 const app = express();
@@ -74,7 +74,7 @@ app.delete('/api/admins/:id', requireAuth(['super_admin']), async (req, res) => 
 app.get('/api/jobs/public', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT id, title, title_am, office_name, description, description_am,
+      SELECT id, title, title_am, office_name, org_photo_url, description, description_am,
              min_education, field_of_study, min_experience, required_skills,
              positions, deadline, created_at
       FROM jobs WHERE status = 'open' ORDER BY created_at DESC
@@ -89,7 +89,7 @@ app.get('/api/jobs/public', async (req, res) => {
 app.get('/api/jobs/public/:id', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, title, title_am, office_name, description, description_am,
+      `SELECT id, title, title_am, office_name, org_photo_url, description, description_am,
               min_education, field_of_study, min_experience, required_skills,
               positions, deadline, created_at
        FROM jobs WHERE id = $1 AND status = 'open'`,
@@ -123,14 +123,15 @@ app.get('/api/jobs', requireAuth(), async (req, res) => {
 });
 
 // HR: create job
-app.post('/api/jobs', requireAuth(), async (req, res) => {
+app.post('/api/jobs', requireAuth(), uploadOrgPhoto.single('org_photo'), async (req, res) => {
   try {
     const f = req.body;
+    const orgPhotoUrl = req.file ? req.file.path : null;
     const result = await pool.query(`
-      INSERT INTO jobs (admin_id, title, title_am, office_name, description, description_am,
+      INSERT INTO jobs (admin_id, title, title_am, office_name, org_photo_url, description, description_am,
         min_education, field_of_study, min_experience, required_skills, positions, deadline, status)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'open') RETURNING *`,
-      [req.admin.id, f.title, f.title_am, req.admin.office, f.description, f.description_am,
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'open') RETURNING *`,
+      [req.admin.id, f.title, f.title_am, req.admin.office, orgPhotoUrl, f.description, f.description_am,
        f.min_education, f.field_of_study, f.min_experience || 0, f.required_skills,
        f.positions || 1, f.deadline || null]
     );
@@ -142,9 +143,23 @@ app.post('/api/jobs', requireAuth(), async (req, res) => {
 });
 
 // HR: update job
-app.put('/api/jobs/:id', requireAuth(), async (req, res) => {
+app.put('/api/jobs/:id', requireAuth(), uploadOrgPhoto.single('org_photo'), async (req, res) => {
   try {
     const f = req.body;
+    if (req.file) {
+      const result = await pool.query(`
+        UPDATE jobs SET title=$1, title_am=$2, description=$3, description_am=$4,
+          min_education=$5, field_of_study=$6, min_experience=$7, required_skills=$8,
+          positions=$9, deadline=$10, status=$11, org_photo_url=$12
+        WHERE id=$13 AND (office_name=$14 OR $15=true) RETURNING *`,
+        [f.title, f.title_am, f.description, f.description_am,
+         f.min_education, f.field_of_study, f.min_experience || 0, f.required_skills,
+         f.positions || 1, f.deadline || null, f.status || 'open', req.file.path,
+         req.params.id, req.admin.office, req.admin.role === 'super_admin']
+      );
+      if (!result.rows[0]) return res.status(404).json({ error: 'Job not found.' });
+      return res.json(result.rows[0]);
+    }
     const result = await pool.query(`
       UPDATE jobs SET title=$1, title_am=$2, description=$3, description_am=$4,
         min_education=$5, field_of_study=$6, min_experience=$7, required_skills=$8,
