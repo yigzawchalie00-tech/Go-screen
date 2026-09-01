@@ -59,6 +59,8 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .job-card:hover { box-shadow: var(--shadow); border-color: var(--accent); }
 .job-card-office { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 8px; }
 .job-card-title { font-family: var(--serif); font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+.job-card-photo { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+.job-info-photo { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 14px; }
 .job-card-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
 .job-tag { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--accent-light); color: var(--accent); font-weight: 500; }
 .job-tag.exp { background: var(--gold-light); color: var(--gold); }
@@ -215,4 +217,4 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
   .pub-content { padding: 20px 12px; }
   .apply-card { padding: 16px; }
   .job-info-card { padding: 14px 16px; }
-  }
+    }
