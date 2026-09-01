@@ -126,7 +126,7 @@ app.get('/api/jobs', requireAuth(), async (req, res) => {
 app.post('/api/jobs', requireAuth(), uploadOrgPhoto.single('org_photo'), async (req, res) => {
   try {
     const f = req.body;
-    const orgPhotoUrl = req.file ? req.file.path : null;
+    const orgPhotoUrl = req.file ? (req.file.secure_url || req.file.path || req.file.url || null) : null;
     const result = await pool.query(`
       INSERT INTO jobs (admin_id, title, title_am, office_name, org_photo_url, description, description_am,
         min_education, field_of_study, min_experience, required_skills, positions, deadline, status)
@@ -154,7 +154,8 @@ app.put('/api/jobs/:id', requireAuth(), uploadOrgPhoto.single('org_photo'), asyn
         WHERE id=$13 AND (office_name=$14 OR $15=true) RETURNING *`,
         [f.title, f.title_am, f.description, f.description_am,
          f.min_education, f.field_of_study, f.min_experience || 0, f.required_skills,
-         f.positions || 1, f.deadline || null, f.status || 'open', req.file.path,
+         f.positions || 1, f.deadline || null, f.status || 'open',
+         req.file.secure_url || req.file.path || req.file.url || null,
          req.params.id, req.admin.office, req.admin.role === 'super_admin']
       );
       if (!result.rows[0]) return res.status(404).json({ error: 'Job not found.' });
